@@ -5,11 +5,16 @@ QT += qml quick widgets
 WALLET_ROOT=$$PWD/monero
 
 CONFIG += c++11 link_pkgconfig
+packagesExist(hidapi-libusb) {
+    PKGCONFIG += hidapi-libusb
+}
 packagesExist(libpcsclite) {
     PKGCONFIG += libpcsclite
 }
-QMAKE_CXXFLAGS += -fPIC -fstack-protector
-QMAKE_LFLAGS += -fstack-protector
+!win32 {
+   QMAKE_CXXFLAGS += -fPIC -fstack-protector -fstack-protector-strong
+   QMAKE_LFLAGS += -fstack-protector -fstack-protector-strong
+}
 
 # cleaning "auto-generated" bitmonero directory on "make distclean"
 QMAKE_DISTCLEAN += -r $$WALLET_ROOT
@@ -108,6 +113,7 @@ LIBS += -L$$WALLET_ROOT/lib \
         -llmdb \
         -lepee \
         -lunbound \
+        -lsodium \
         -leasylogging \
 }
 
@@ -118,13 +124,14 @@ android {
         -llmdb \
         -lepee \
         -lunbound \
+        -lsodium \
         -leasylogging
 }
 
 
 
-QMAKE_CXXFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 -Wformat -Wformat-security -fstack-protector -fstack-protector-strong
-QMAKE_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 -Wformat -Wformat-security -fstack-protector -fstack-protector-strong
+QMAKE_CXXFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 -Wformat -Wformat-security
+QMAKE_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 -Wformat -Wformat-security
 
 ios {
     message("Host is IOS")
@@ -137,6 +144,7 @@ ios {
         -llmdb \
         -lepee \
         -lunbound \
+        -lsodium \
         -leasylogging
 
     LIBS+= \
@@ -151,6 +159,7 @@ ios {
         -lboost_chrono \
         -lboost_program_options \
         -lssl \
+        -lsodium \
         -lcrypto \
         -ldl
 }
@@ -220,15 +229,15 @@ win32 {
     
     LIBS+= \
         -Wl,-Bstatic \
-        -lboost_serialization-mt-s \
-        -lboost_thread-mt-s \
-        -lboost_system-mt-s \
-        -lboost_date_time-mt-s \
-        -lboost_filesystem-mt-s \
-        -lboost_regex-mt-s \
-        -lboost_chrono-mt-s \
-        -lboost_program_options-mt-s \
-        -lboost_locale-mt-s \
+        -lboost_serialization-mt\
+        -lboost_thread-mt\
+        -lboost_system-mt\
+        -lboost_date_time-mt\
+        -lboost_filesystem-mt\
+        -lboost_regex-mt\
+        -lboost_chrono-mt\
+        -lboost_program_options-mt\
+        -lboost_locale-mt\
         -licuio \
         -licuin \
         -licuuc \
@@ -236,11 +245,16 @@ win32 {
         -licutu \
         -liconv \
         -lssl \
+        -llmdb \
+        -lsodium \
         -lcrypto \
         -Wl,-Bdynamic \
+        -lwinscard \
         -lws2_32 \
         -lwsock32 \
         -lIphlpapi \
+        -lcrypt32 \
+        -lhidapi \
         -lgdi32
     
     !contains(MSYS_HOST_ARCH, x86_64) {
@@ -279,6 +293,7 @@ linux {
         -lboost_chrono \
         -lboost_program_options \
         -lssl \
+        -lsodium \
         -llmdb \
         -lcrypto
 
@@ -318,6 +333,7 @@ macx {
         -lboost_chrono \
         -lboost_program_options \
         -lssl \
+        -lsodium \
         -lcrypto \
         -ldl
     LIBS+= -framework PCSC
