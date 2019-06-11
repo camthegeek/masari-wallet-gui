@@ -48,7 +48,7 @@ Rectangle {
         console.log("Settings page loaded");
 
         if(typeof daemonManager != "undefined"){
-            appWindow.daemonRunning =  daemonManager.running(persistentSettings.testnet);
+            daemonRunning =  appWindow.daemonRunning;
         }
 
         logLevelDropdown.update()
@@ -350,7 +350,7 @@ Rectangle {
             StandardButton {
                 id: startDaemonButton
                 small: true
-                visible: !appWindow.daemonRunning
+                visible: !daemonRunning
                 text: qsTr("Start Local Node") + translationManager.emptyString
                 onClicked: {
                     // Update bootstrap daemon address
@@ -365,7 +365,7 @@ Rectangle {
             StandardButton {
                 id: stopDaemonButton
                 small: true
-                visible: appWindow.daemonRunning
+                visible: daemonRunning
                 text: qsTr("Stop Local Node") + translationManager.emptyString
                 onClicked: {
                     appWindow.stopDaemon()
