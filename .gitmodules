@@ -1,0 +1,4 @@
+[submodule "masari"]
+	path = masari
+	url = https://github.com/masari-project/masari
+	ignore = all
